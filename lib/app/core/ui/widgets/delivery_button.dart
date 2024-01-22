@@ -20,7 +20,10 @@ class DeliveryButton extends StatelessWidget {
       height: height,
       child: ElevatedButton(
         onPressed: () {},
-        child: Text(label),
+        child: Text(
+          label,
+          style: const TextStyle(color: Colors.white),
+        ),
       ),
     );
   }
