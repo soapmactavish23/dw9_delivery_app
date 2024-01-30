@@ -13,11 +13,14 @@ class AppStyles {
   }
 
   ButtonStyle get primaryButton => ElevatedButton.styleFrom(
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(7),
-      ),
-      backgroundColor: ColorsApp.i.primary,
-      textStyle: TextStyles.i.textButtonLabel);
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(7),
+        ),
+        backgroundColor: ColorsApp.i.primary,
+        textStyle: TextStyles.i.textButtonLabel.copyWith(
+          color: Colors.white,
+        ),
+      );
 }
 
 extension AppStylesExtension on BuildContext {

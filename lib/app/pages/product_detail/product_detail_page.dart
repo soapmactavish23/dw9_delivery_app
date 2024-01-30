@@ -5,6 +5,7 @@ import 'package:dw9_delivery_app/app/core/ui/helpers/size_extensions.dart';
 import 'package:dw9_delivery_app/app/core/ui/styles/text_style.dart';
 import 'package:dw9_delivery_app/app/core/ui/widgets/delivery_app_bar.dart';
 import 'package:dw9_delivery_app/app/core/ui/widgets/delivery_increment_decrement_button.dart';
+import 'package:dw9_delivery_app/app/dto/order_product_dto.dart';
 import 'package:dw9_delivery_app/app/models/product_model.dart';
 import 'package:dw9_delivery_app/app/pages/product_detail/product_detail_controller.dart';
 import 'package:flutter/material.dart';
@@ -87,15 +88,19 @@ class _ProductDetailPageState
                     return Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: ElevatedButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          Navigator.of(context).pop(OrderProductDto(
+                            product: widget.product,
+                            amount: amount,
+                          ));
+                        },
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Text(
                               'Adicionar',
-                              style: context.textStyles.textExtraBold.copyWith(
-                                fontSize: 13,
-                              ),
+                              style: context.textStyles.textExtraBold
+                                  .copyWith(fontSize: 13, color: Colors.white),
                             ),
                             const SizedBox(
                               height: 10,
@@ -107,6 +112,9 @@ class _ProductDetailPageState
                                 maxFontSize: 13,
                                 minFontSize: 5,
                                 maxLines: 1,
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                ),
                               ),
                             )
                           ],
