@@ -13,7 +13,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 class ProductDetailPage extends StatefulWidget {
   final ProductModel product;
-  const ProductDetailPage({super.key, required this.product});
+  final OrderProductDto? order;
+  const ProductDetailPage({super.key, required this.product, this.order});
 
   @override
   State<ProductDetailPage> createState() => _ProductDetailPageState();
@@ -21,6 +22,48 @@ class ProductDetailPage extends StatefulWidget {
 
 class _ProductDetailPageState
     extends BaseState<ProductDetailPage, ProductDetailController> {
+  @override
+  void initState() {
+    super.initState();
+    final amount = widget.order?.amount ?? 1;
+    controller.initial(amount, widget.order != null);
+  }
+
+  void _showConfirmDelete(int amount) {
+    showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (context) {
+          return AlertDialog(
+            title: const Text("Deseja excluir o produto?"),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: Text(
+                  'Cancelar',
+                  style:
+                      context.textStyles.textBold.copyWith(color: Colors.red),
+                ),
+              ),
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                  Navigator.of(context).pop(
+                    OrderProductDto(product: widget.product, amount: amount),
+                  );
+                },
+                child: Text(
+                  'Confirmar',
+                  style: context.textStyles.textBold,
+                ),
+              ),
+            ],
+          );
+        });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -88,36 +131,53 @@ class _ProductDetailPageState
                     return Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: ElevatedButton(
+                        style: amount == 0
+                            ? ElevatedButton.styleFrom(
+                                backgroundColor: Colors.red)
+                            : null,
                         onPressed: () {
-                          Navigator.of(context).pop(OrderProductDto(
-                            product: widget.product,
-                            amount: amount,
-                          ));
+                          if (amount == 0) {
+                            _showConfirmDelete(amount);
+                          } else {
+                            Navigator.of(context).pop(OrderProductDto(
+                              product: widget.product,
+                              amount: amount,
+                            ));
+                          }
                         },
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(
-                              'Adicionar',
-                              style: context.textStyles.textExtraBold
-                                  .copyWith(fontSize: 13, color: Colors.white),
-                            ),
-                            const SizedBox(
-                              height: 10,
-                            ),
-                            Expanded(
-                              child: AutoSizeText(
-                                (widget.product.price * amount).currencyPTBR,
-                                textAlign: TextAlign.center,
-                                maxFontSize: 13,
-                                minFontSize: 5,
-                                maxLines: 1,
-                                style: const TextStyle(
-                                  color: Colors.white,
-                                ),
+                        child: Visibility(
+                          visible: amount > 0,
+                          replacement: Text(
+                            "Excluir produto",
+                            style: context.textStyles.textExtraBold
+                                .copyWith(color: Colors.white),
+                          ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                'Adicionar',
+                                style: context.textStyles.textExtraBold
+                                    .copyWith(
+                                        fontSize: 13, color: Colors.white),
                               ),
-                            )
-                          ],
+                              const SizedBox(
+                                height: 10,
+                              ),
+                              Expanded(
+                                child: AutoSizeText(
+                                  (widget.product.price * amount).currencyPTBR,
+                                  textAlign: TextAlign.center,
+                                  maxFontSize: 13,
+                                  minFontSize: 5,
+                                  maxLines: 1,
+                                  style: const TextStyle(
+                                    color: Colors.white,
+                                  ),
+                                ),
+                              )
+                            ],
+                          ),
                         ),
                       ),
                     );
