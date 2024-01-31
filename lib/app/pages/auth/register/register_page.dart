@@ -2,6 +2,7 @@ import 'package:dw9_delivery_app/app/core/ui/styles/text_style.dart';
 import 'package:dw9_delivery_app/app/core/ui/widgets/delivery_app_bar.dart';
 import 'package:dw9_delivery_app/app/core/ui/widgets/delivery_button.dart';
 import 'package:flutter/material.dart';
+import 'package:validatorless/validatorless.dart';
 
 class RegisterPage extends StatelessWidget {
   const RegisterPage({super.key});
@@ -30,12 +31,14 @@ class RegisterPage extends StatelessWidget {
                 ),
                 TextFormField(
                   decoration: const InputDecoration(labelText: 'Nome'),
+                  validator: Validatorless.required('Nome obrigatório'),
                 ),
                 const SizedBox(
                   height: 30,
                 ),
                 TextFormField(
                   decoration: const InputDecoration(labelText: 'E-mail'),
+                  validator: Validatorless.multiple([]),
                 ),
                 const SizedBox(
                   height: 30,
