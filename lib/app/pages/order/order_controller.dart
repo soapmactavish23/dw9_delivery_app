@@ -29,4 +29,44 @@ class OrderController extends Cubit<OrderState> {
       emit(state.copyWith(status: OrderStatus.error, errorMessage: message));
     }
   }
+
+  void incrementProduct(int index) {
+    List<OrderProductDto> orders = [...state.orderProducts];
+    OrderProductDto order = orders[index];
+    orders[index] = order.copyWith(amount: order.amount + 1);
+    emit(
+      state.copyWith(orderProducts: orders, status: OrderStatus.updateOrder),
+    );
+  }
+
+  void decrementProduct(int index) {
+    List<OrderProductDto> orders = [...state.orderProducts];
+    OrderProductDto order = orders[index];
+    int amount = order.amount;
+
+    if (amount == 1) {
+      if (state.status != OrderStatus.confirmRemoveProduct) {
+        emit(OrderConfirmDeleteState(
+            orderProductDto: order,
+            index: index,
+            status: OrderStatus.confirmRemoveProduct,
+            orderProducts: state.orderProducts,
+            paymentTypes: state.paymentTypes,
+            errorMessage: state.errorMessage));
+        return;
+      } else {
+        orders.removeAt(index);
+      }
+    } else {
+      orders[index] = order.copyWith(amount: order.amount - 1);
+    }
+
+    emit(
+      state.copyWith(orderProducts: orders, status: OrderStatus.updateOrder),
+    );
+  }
+
+  void cancelDeleteProcess() {
+    emit(state.copyWith(status: OrderStatus.loaded));
+  }
 }
