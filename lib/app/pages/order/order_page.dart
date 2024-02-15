@@ -88,6 +88,19 @@ class _OrderPageState extends BaseState<OrderPage, OrderController> {
               _showConfirmProductDialog(state);
             }
           },
+          emptyBag: () {
+            showInfo(
+              'Sua sacola está vazia, por favor selecione um produto para realizar seu pedido',
+            );
+            Navigator.of(context).pop(<OrderProductDto>[]);
+          },
+          success: () {
+            hideLoader();
+            Navigator.of(context).popAndPushNamed(
+              '/order/completed',
+              result: <OrderProductDto>[],
+            );
+          },
         );
       },
       child: WillPopScope(
@@ -112,7 +125,7 @@ class _OrderPageState extends BaseState<OrderPage, OrderController> {
                           style: context.textStyles.textTitle,
                         ),
                         IconButton(
-                          onPressed: () {},
+                          onPressed: () => controller.emptyBag(),
                           icon: Image.asset('assets/images/trashRegular.png'),
                         ),
                       ],
@@ -236,10 +249,16 @@ class _OrderPageState extends BaseState<OrderPage, OrderController> {
                           onPressed: () {
                             final valid =
                                 formKey.currentState?.validate() ?? false;
+                            final paymentTypeSelected = paymentTypeId != null;
+                            paymentTypeValid.value = paymentTypeSelected;
 
-                            paymentTypeValid.value = paymentTypeId != null;
-
-                            if (valid) {}
+                            if (valid && paymentTypeSelected) {
+                              controller.saveOrder(
+                                address: addressEC.text,
+                                document: documentEC.text,
+                                paymentMethodId: paymentTypeId!,
+                              );
+                            }
                           },
                         ),
                       )
